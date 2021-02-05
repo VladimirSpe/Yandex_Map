@@ -15,7 +15,7 @@ class MainWindow:
         size = self.x, self.y, self.z
         response = 0
         if size != 0:
-            map_request = f"""http://static-maps.yandex.ru/1.x/?ll={size[1]},{size[0]}&spn={size[2]},{size[2]}&l=map"""
+            map_request = f"""http://static-maps.yandex.ru/1.x/?ll={size[0]},{size[1]}&spn={size[2]},{size[2]}&l=map"""
             response = requests.get(map_request)
         else:
             map_request = 'Неверные координаты'
@@ -36,6 +36,28 @@ class MainWindow:
         screen = pygame.display.set_mode(size)
         screen.blit(bg, [0, 0])
         pygame.display.flip()
-        while pygame.event.wait().type != pygame.QUIT:
-            screen.blit(bg, [0, 0])
+        running = True
+        while running:
+            for event in pygame.event.get():
+                x, y = 0, 0
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        y += 1
+                    if event.key == pygame.K_DOWN:
+                        y -= 1
+                    if event.key == pygame.K_LEFT:
+                        x -= 1
+                    if event.key == pygame.K_RIGHT:
+                        x += 1
+                    if x != 0 or y != 0:
+                        self.x += x
+                        self.y += y
+                        self.get_image()
+                        bg = pygame.image.load("data/map.png")
+                        screen.blit(bg, [0, 0])
+                        pygame.display.flip()
+                    print(x, y)
+
         pygame.quit()
