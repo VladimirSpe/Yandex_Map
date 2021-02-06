@@ -2,10 +2,11 @@ from consts import *
 
 
 class MainWindow:
-    def __init__(self, x: int, y: int, z: int):
+    def __init__(self, x: float, y: float, z: float, stat: str):
         self.x = x
         self.y = y
         self.z = z
+        self.stat = map_options[stat.lower()]
 
         self.get_image()
         self.mainloop()
@@ -15,7 +16,7 @@ class MainWindow:
         size = self.x, self.y, self.z
         response = 0
         if size != 0:
-            map_request = f"""http://static-maps.yandex.ru/1.x/?ll={size[1]},{size[0]}&spn={size[2]},{size[2]}&l=map"""
+            map_request = f"""http://static-maps.yandex.ru/1.x/?ll={size[1]},{size[0]}&spn={size[2]},{size[2]}&l={self.stat}"""
             response = requests.get(map_request)
         else:
             map_request = 'Неверные координаты'
@@ -29,6 +30,7 @@ class MainWindow:
             file.write(response.content)
 
     def mainloop(self):
+        import pygame
         pygame.init()
         bg = pygame.image.load("data/map.png")
         size = bg.get_size()
@@ -36,6 +38,32 @@ class MainWindow:
         screen = pygame.display.set_mode(size)
         screen.blit(bg, [0, 0])
         pygame.display.flip()
-        while pygame.event.wait().type != pygame.QUIT:
-            screen.blit(bg, [0, 0])
+        running = True
+        while running:
+            for event in pygame.event.get():
+                x, y, z = 0, 0, 0
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        y += 0.5
+                    if event.key == pygame.K_DOWN:
+                        y -= 0.5
+                    if event.key == pygame.K_LEFT:
+                        x -= 0.5
+                    if event.key == pygame.K_RIGHT:
+                        x += 0.5
+                    if event.key == 1073741921:
+                        z += 0.5
+                    if event.key == 1073741915:
+                        z -= 0.5
+                    if x != 0 or y != 0 or z != 0:
+                        self.y += x
+                        self.x += y
+                        self.z += z
+                        self.get_image()
+                        bg = pygame.image.load("data/map.png")
+                        screen.blit(bg, [0, 0])
+                        pygame.display.flip()
+
         pygame.quit()
