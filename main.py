@@ -3,9 +3,9 @@ from consts import *
 
 def main(argc: int, argv: typing.List[str]):
     try:
-        x = int(argv[1])
-        y = int(argv[2])
-        z = int(argv[3])
+        x = float(argv[1])
+        y = float(argv[2])
+        z = float(argv[3])
     except Exception:
         print("Некорректный ввод")
         sys.exit(-1)
